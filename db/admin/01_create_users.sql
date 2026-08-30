@@ -1,5 +1,5 @@
--- Run as SYSTEM against FREEPDB1.
--- Create a dedicated tablespace so project tables are not stored in SYSTEM.
+-- Pokrenuti kao SYSTEM nad FREEPDB1.
+-- Kreira posebne tablespace-ove kako projektne tabele ne bi bile smeštene u SYSTEM.
 
 DECLARE
   l_tablespace_count PLS_INTEGER;
@@ -76,5 +76,5 @@ EXCEPTION
 END;
 /
 
-GRANT CREATE SESSION, CREATE TABLE, CREATE VIEW, CREATE SEQUENCE, CREATE PROCEDURE
+GRANT CREATE SESSION, CREATE TABLE, CREATE VIEW, CREATE MATERIALIZED VIEW, CREATE SEQUENCE, CREATE PROCEDURE
   TO seds_dw;
