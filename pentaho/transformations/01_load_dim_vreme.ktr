@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<transformation>
+  <info>
+    <name>01_load_dim_vreme</name>
+    <description>Loads the role-playing date dimension from distinct OLTP loan dates.</description>
+    <extended_description/>
+    <trans_version/>
+    <trans_type>Normal</trans_type>
+    <directory>/</directory>
+    <parameters>
+    </parameters>
+    <log>
+      <trans-log-table><connection/><schema/><table/><size_limit_lines/><interval/><timeout_days/></trans-log-table>
+      <perf-log-table><connection/><schema/><table/><interval/><timeout_days/></perf-log-table>
+      <channel-log-table><connection/><schema/><table/><timeout_days/></channel-log-table>
+      <step-log-table><connection/><schema/><table/><timeout_days/></step-log-table>
+      <metrics-log-table><connection/><schema/><table/><timeout_days/></metrics-log-table>
+    </log>
+    <maxdate/>
+    <size_rowset>10000</size_rowset>
+    <sleep_time_empty>50</sleep_time_empty>
+    <sleep_time_full>50</sleep_time_full>
+    <unique_connections>N</unique_connections>
+    <feedback_shown>Y</feedback_shown>
+    <feedback_size>50000</feedback_size>
+    <using_thread_priorities>Y</using_thread_priorities>
+    <capture_step_performance>N</capture_step_performance>
+    <step_performance_capturing_delay>1000</step_performance_capturing_delay>
+    <step_performance_capturing_size_limit>100</step_performance_capturing_size_limit>
+    <dependencies>
+    </dependencies>
+    <partitionschemas>
+    </partitionschemas>
+    <slaveservers>
+    </slaveservers>
+    <clusterschemas>
+    </clusterschemas>
+    <created_user/>
+    <created_date/>
+    <modified_user/>
+    <modified_date/>
+    <key_for_session_key/>
+    <is_key_private>N</is_key_private>
+  </info>
+  <connection>
+    <name>SEDS_OLTP</name>
+    <server>localhost</server>
+    <type>ORACLE</type>
+    <access>Native</access>
+    <database>/FREEPDB1</database>
+    <port>1521</port>
+    <username>SEDS_OLTP</username>
+    <password>SEDS_OLTP</password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute><code>PORT_NUMBER</code><attribute>1521</attribute></attribute>
+      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
+    </attributes>
+  </connection>
+  <connection>
+    <name>SEDS_DW</name>
+    <server>localhost</server>
+    <type>ORACLE</type>
+    <access>Native</access>
+    <database>/FREEPDB1</database>
+    <port>1521</port>
+    <username>SEDS_DW</username>
+    <password>SEDS_DW</password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute><code>PORT_NUMBER</code><attribute>1521</attribute></attribute>
+      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
+    </attributes>
+  </connection>
+  <order>
+    <hop><from>Extract distinct dates</from><to>Load DIM_VREME</to><enabled>Y</enabled></hop>
+  </order>
+  <step>
+    <name>Extract distinct dates</name>
+    <type>TableInput</type>
+    <description>Extracts and transforms each date used by a loan.</description>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning><method>none</method><schema_name/></partitioning>
+    <connection>SEDS_OLTP</connection>
+    <sql>SELECT TO_NUMBER(TO_CHAR(datum, 'YYYYMMDD')) AS VREME_ID,
+       datum AS DATUM,
+       TO_NUMBER(TO_CHAR(datum, 'DD')) AS DAN,
+       TO_NUMBER(TO_CHAR(datum, 'MM')) AS MESEC,
+       CASE TO_CHAR(datum, 'MM')
+         WHEN '01' THEN 'januar' WHEN '02' THEN 'februar' WHEN '03' THEN 'mart'
+         WHEN '04' THEN 'april' WHEN '05' THEN 'maj' WHEN '06' THEN 'jun'
+         WHEN '07' THEN 'jul' WHEN '08' THEN 'avgust' WHEN '09' THEN 'septembar'
+         WHEN '10' THEN 'oktobar' WHEN '11' THEN 'novembar' WHEN '12' THEN 'decembar'
+       END AS NAZIV_MESECA,
+       TO_NUMBER(TO_CHAR(datum, 'Q')) AS KVARTAL,
+       TO_NUMBER(TO_CHAR(datum, 'YYYY')) AS GODINA,
+       CASE TRUNC(datum) - TRUNC(datum, 'IW') + 1
+         WHEN 1 THEN 'ponedeljak' WHEN 2 THEN 'utorak' WHEN 3 THEN 'sreda'
+         WHEN 4 THEN 'četvrtak' WHEN 5 THEN 'petak' WHEN 6 THEN 'subota'
+         WHEN 7 THEN 'nedelja'
+       END AS DAN_U_NEDELJI
+  FROM (
+    SELECT datum_pozajmice AS datum FROM pozajmica
+    UNION
+    SELECT rok_vracanja AS datum FROM pozajmica
+    UNION
+    SELECT datum_vracanja AS datum FROM pozajmica WHERE datum_vracanja IS NOT NULL
+  )</sql>
+    <limit/>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps><input></input><output></output></remotesteps>
+    <GUI><xloc>160</xloc><yloc>160</yloc><draw>Y</draw></GUI>
+  </step>
+  <step>
+    <name>Load DIM_VREME</name>
+    <type>TableOutput</type>
+    <description>Loads date attributes into the DW date dimension.</description>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning><method>none</method><schema_name/></partitioning>
+    <connection>SEDS_DW</connection>
+    <schema/>
+    <table>DIM_VREME</table>
+    <commit>1000</commit>
+    <truncate>N</truncate>
+    <ignore_errors>N</ignore_errors>
+    <use_batch>Y</use_batch>
+    <specify_fields>Y</specify_fields>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_monthly>N</partitioning_monthly>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_field/>
+    <tablename_in_table>N</tablename_in_table>
+    <return_keys>N</return_keys>
+    <return_field/>
+    <fields>
+      <field><column_name>VREME_ID</column_name><stream_name>VREME_ID</stream_name></field>
+      <field><column_name>DATUM</column_name><stream_name>DATUM</stream_name></field>
+      <field><column_name>DAN</column_name><stream_name>DAN</stream_name></field>
+      <field><column_name>MESEC</column_name><stream_name>MESEC</stream_name></field>
+      <field><column_name>NAZIV_MESECA</column_name><stream_name>NAZIV_MESECA</stream_name></field>
+      <field><column_name>KVARTAL</column_name><stream_name>KVARTAL</stream_name></field>
+      <field><column_name>GODINA</column_name><stream_name>GODINA</stream_name></field>
+      <field><column_name>DAN_U_NEDELJI</column_name><stream_name>DAN_U_NEDELJI</stream_name></field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps><input></input><output></output></remotesteps>
+    <GUI><xloc>540</xloc><yloc>160</yloc><draw>Y</draw></GUI>
+  </step>
+  <step_error_handling>
+  </step_error_handling>
+  <slave-step-copy-partition-distribution>
+  </slave-step-copy-partition-distribution>
+  <slave_transformation>N</slave_transformation>
+  <attributes/>
+</transformation>
