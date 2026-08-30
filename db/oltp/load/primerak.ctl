@@ -1,0 +1,15 @@
+OPTIONS (SKIP=1, ERRORS=0)
+LOAD DATA
+CHARACTERSET AL32UTF8
+APPEND
+INTO TABLE primerak
+FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
+TRAILING NULLCOLS
+(
+  primerak_id INTEGER EXTERNAL,
+  inventarski_broj CHAR,
+  datum_nabavke DATE "YYYY-MM-DD",
+  fizicko_stanje CHAR,
+  publikacija_id INTEGER EXTERNAL,
+  odeljenje_id INTEGER EXTERNAL
+)
