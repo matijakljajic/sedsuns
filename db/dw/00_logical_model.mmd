@@ -1,0 +1,24 @@
+---
+config:
+  theme: base
+  layout: elk
+  elk:
+    layoutDirection: TB
+    nodeSpacing: 80
+    rankSpacing: 80
+---
+
+erDiagram
+    DIM_VREME ||--o{ FACT_POZAJMICA : "datum pozajmice"
+    DIM_VREME ||--o{ FACT_POZAJMICA : "rok za vraćanje"
+    DIM_VREME o|--o{ FACT_POZAJMICA : "datum vraćanja"
+
+    DIM_ČLAN ||--o{ FACT_POZAJMICA : "vrši"
+    DIM_PUBLIKACIJA ||--o{ FACT_POZAJMICA : "predmet"
+    DIM_STATUS_POZAJMICE ||--o{ FACT_POZAJMICA : "ima status"
+
+    DIM_GRAD ||--o{ DIM_BIBLIOTEKA : "ima"
+    DIM_BIBLIOTEKA ||--o{ DIM_ODELJENJE : "sadrži"
+    DIM_ODELJENJE ||--o{ FACT_POZAJMICA : "mesto pozajmice"
+
+    DIM_AUTOR }o--o{ DIM_PUBLIKACIJA : "napisao"

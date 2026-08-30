@@ -1,0 +1,112 @@
+---
+config:
+  theme: base
+  layout: elk
+  elk:
+    layoutDirection: TB
+    nodeSpacing: 80
+    rankSpacing: 80
+---
+
+erDiagram
+    GRAD {
+        int grad_id PK
+        varchar2 naziv
+    }
+
+    BIBLIOTEKA {
+        int biblioteka_id PK
+        varchar2 naziv
+        varchar2 adresa
+        int grad_id FK
+    }
+
+    ODELJENJE {
+        int odeljenje_id PK
+        varchar2 naziv
+        int biblioteka_id FK
+    }
+
+    TIP_PUBLIKACIJE {
+        int tip_publikacije_id PK
+        varchar2 naziv
+    }
+
+    IZDAVAC {
+        int izdavac_id PK
+        varchar2 naziv
+        varchar2 drzava
+    }
+
+    AUTOR {
+        int autor_id PK
+        varchar2 ime
+        varchar2 prezime
+        int godina_rodjenja
+        varchar2 drzava
+    }
+
+    PUBLIKACIJA {
+        int publikacija_id PK
+        varchar2 naslov
+        varchar2 isbn UK
+        int godina_izdanja
+        int broj_strana
+        int tip_publikacije_id FK
+        int izdavac_id FK
+    }
+
+    PUBLIKACIJA_AUTOR {
+        int publikacija_id PK, FK
+        int autor_id PK, FK
+    }
+
+    PRIMERAK {
+        int primerak_id PK
+        varchar2 inventarski_broj UK
+        date datum_nabavke
+        varchar2 fizicko_stanje
+        int publikacija_id FK
+        int odeljenje_id FK
+    }
+
+    CLAN {
+        int clan_id PK
+        varchar2 ime
+        varchar2 prezime
+        char pol
+        date datum_rodjenja
+        varchar2 email UK
+        date datum_uclanjenja
+    }
+
+    STATUS_POZAJMICE {
+        int status_pozajmice_id PK
+        varchar2 naziv
+    }
+
+    POZAJMICA {
+        int pozajmica_id PK
+        date datum_pozajmice
+        date rok_vracanja
+        date datum_vracanja
+        int clan_id FK
+        int primerak_id FK
+        int status_pozajmice_id FK
+    }
+
+    GRAD ||--o{ BIBLIOTEKA : grad_id
+    BIBLIOTEKA ||--o{ ODELJENJE : biblioteka_id
+    ODELJENJE ||--o{ PRIMERAK : odeljenje_id
+
+    TIP_PUBLIKACIJE ||--o{ PUBLIKACIJA : tip_publikacije_id
+    IZDAVAC o|--o{ PUBLIKACIJA : izdavac_id
+
+    PUBLIKACIJA ||--o{ PUBLIKACIJA_AUTOR : publikacija_id
+    AUTOR ||--o{ PUBLIKACIJA_AUTOR : autor_id
+
+    PUBLIKACIJA ||--o{ PRIMERAK : publikacija_id
+
+    CLAN ||--o{ POZAJMICA : clan_id
+    PRIMERAK ||--o{ POZAJMICA : primerak_id
+    STATUS_POZAJMICE ||--o{ POZAJMICA : status_pozajmice_id

@@ -1,0 +1,24 @@
+---
+config:
+  theme: base
+  layout: elk
+  elk:
+    layoutDirection: TB
+    nodeSpacing: 80
+    rankSpacing: 80
+---
+
+erDiagram
+    GRAD ||--o{ BIBLIOTEKA : "ima"
+    BIBLIOTEKA ||--o{ ODELJENJE : "sadrži"
+    ODELJENJE ||--o{ PRIMERAK : "čuva"
+
+    TIP_PUBLIKACIJE ||--o{ PUBLIKACIJA : "klasifikuje"
+    IZDAVAČ o|--o{ PUBLIKACIJA : "izdaje"
+    AUTOR }o--o{ PUBLIKACIJA : "napisao"
+
+    PUBLIKACIJA ||--o{ PRIMERAK : "ima"
+
+    ČLAN ||--o{ POZAJMICA : "vrši"
+    PRIMERAK ||--o{ POZAJMICA : "je predmet"
+    STATUS_POZAJMICE ||--o{ POZAJMICA : "opisuje"

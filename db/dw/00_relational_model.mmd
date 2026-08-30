@@ -1,0 +1,107 @@
+---
+config:
+  theme: base
+  layout: elk
+  elk:
+    layoutDirection: TB
+    nodeSpacing: 80
+    rankSpacing: 80
+---
+
+erDiagram
+    DIM_VREME {
+        int vreme_id PK
+        date datum
+        int dan
+        int mesec
+        varchar2 naziv_meseca
+        int kvartal
+        int godina
+        varchar2 dan_u_nedelji
+    }
+
+    DIM_CLAN {
+        int clan_id PK
+        char pol
+        date datum_rodjenja
+    }
+
+    DIM_PUBLIKACIJA {
+        int publikacija_id PK
+        varchar2 naslov
+        varchar2 isbn
+        int godina_izdanja
+        int broj_strana
+        varchar2 tip_publikacije
+        varchar2 izdavac
+        varchar2 drzava_izdavaca
+        int broj_autora
+        int broj_primeraka
+    }
+
+    DIM_AUTOR {
+        int autor_id PK
+        varchar2 ime
+        varchar2 prezime
+        int godina_rodjenja
+        varchar2 drzava
+    }
+
+    BRIDGE_PUBLIKACIJA_AUTOR {
+        int publikacija_id PK, FK
+        int autor_id PK, FK
+        number tezina
+    }
+
+    DIM_GRAD {
+        int grad_id PK
+        varchar2 naziv
+    }
+
+    DIM_BIBLIOTEKA {
+        int biblioteka_id PK
+        varchar2 naziv
+        int grad_id FK
+    }
+
+    DIM_ODELJENJE {
+        int odeljenje_id PK
+        varchar2 naziv
+        int biblioteka_id FK
+    }
+
+    DIM_STATUS_POZAJMICE {
+        int status_pozajmice_id PK
+        varchar2 naziv
+    }
+
+    FACT_POZAJMICA {
+        int pozajmica_id PK
+
+        int datum_pozajmice_id FK
+        int rok_vracanja_id FK
+        int datum_vracanja_id FK
+
+        int clan_id FK
+        int publikacija_id FK
+        int odeljenje_id FK
+        int status_pozajmice_id FK
+
+        int broj_dana_pozajmice
+        int broj_dana_kasnjenja
+    }
+
+    DIM_VREME ||--o{ FACT_POZAJMICA : "datum pozajmice"
+    DIM_VREME ||--o{ FACT_POZAJMICA : "rok za vraćanje"
+    DIM_VREME o|--o{ FACT_POZAJMICA : "datum vraćanja"
+
+    DIM_CLAN ||--o{ FACT_POZAJMICA : "član"
+    DIM_PUBLIKACIJA ||--o{ FACT_POZAJMICA : "publikacija"
+    DIM_STATUS_POZAJMICE ||--o{ FACT_POZAJMICA : "status"
+
+    DIM_GRAD ||--o{ DIM_BIBLIOTEKA : "grad"
+    DIM_BIBLIOTEKA ||--o{ DIM_ODELJENJE : "biblioteka"
+    DIM_ODELJENJE ||--o{ FACT_POZAJMICA : "lokacija"
+
+    DIM_PUBLIKACIJA ||--o{ BRIDGE_PUBLIKACIJA_AUTOR : "publikacija"
+    DIM_AUTOR ||--o{ BRIDGE_PUBLIKACIJA_AUTOR : "autor"
