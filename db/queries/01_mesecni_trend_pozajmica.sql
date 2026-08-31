@@ -2,16 +2,11 @@
 
 WITH pozajmice_po_mesecu AS (
   SELECT mesec_datum,
-         godina,
-         mesec,
-         naziv_meseca,
          SUM(broj_pozajmica) AS broj_pozajmica
     FROM seds_dw.mv_mesecni_pregled_biblioteka
-   GROUP BY mesec_datum, godina, mesec, naziv_meseca
+   GROUP BY mesec_datum
 )
-SELECT godina,
-       mesec,
-       naziv_meseca,
+SELECT TO_CHAR(mesec_datum, 'YYYY-MM') AS period,
        broj_pozajmica,
        LAG(broj_pozajmica) OVER (ORDER BY mesec_datum) AS prethodni_mesec,
        broj_pozajmica - LAG(broj_pozajmica) OVER (ORDER BY mesec_datum) AS promena_u_odnosu_na_prethodni_mesec,

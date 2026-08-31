@@ -14,11 +14,15 @@ WITH publikacije_po_godini AS (
 ),
 rangirane_publikacije AS (
   SELECT godina,
+         publikacija_id,
          naslov,
          tip_publikacije,
          izdavac,
          broj_pozajmica,
-         RANK() OVER (PARTITION BY godina ORDER BY broj_pozajmica DESC) AS rang_u_godini
+         ROW_NUMBER() OVER (
+           PARTITION BY godina
+           ORDER BY broj_pozajmica DESC, naslov, publikacija_id
+         ) AS rang_u_godini
     FROM publikacije_po_godini
 )
 SELECT godina,

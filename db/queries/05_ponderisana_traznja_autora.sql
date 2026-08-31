@@ -14,10 +14,14 @@ WITH autorske_pozajmice AS (
 ),
 rangirani_autori AS (
   SELECT godina,
+         autor_id,
          ime,
          prezime,
          ponderisani_broj_pozajmica,
-         DENSE_RANK() OVER (PARTITION BY godina ORDER BY ponderisani_broj_pozajmica DESC) AS rang_u_godini
+         ROW_NUMBER() OVER (
+           PARTITION BY godina
+           ORDER BY ponderisani_broj_pozajmica DESC, prezime, ime, autor_id
+         ) AS rang_u_godini
     FROM autorske_pozajmice
 )
 SELECT godina,
