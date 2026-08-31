@@ -1,23 +1,388 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
-  <info><name>10_load_fact_pozajmica</name><description>Loads one warehouse fact row per OLTP loan.</description><extended_description/><trans_version/><trans_type>Normal</trans_type><directory>/</directory><parameters></parameters><log><trans-log-table><connection/><schema/><table/><size_limit_lines/><interval/><timeout_days/></trans-log-table><perf-log-table><connection/><schema/><table/><interval/><timeout_days/></perf-log-table><channel-log-table><connection/><schema/><table/><timeout_days/></channel-log-table><step-log-table><connection/><schema/><table/><timeout_days/></step-log-table><metrics-log-table><connection/><schema/><table/><timeout_days/></metrics-log-table></log><maxdate/><size_rowset>10000</size_rowset><sleep_time_empty>50</sleep_time_empty><sleep_time_full>50</sleep_time_full><unique_connections>N</unique_connections><feedback_shown>Y</feedback_shown><feedback_size>50000</feedback_size><using_thread_priorities>Y</using_thread_priorities><capture_step_performance>N</capture_step_performance><step_performance_capturing_delay>1000</step_performance_capturing_delay><step_performance_capturing_size_limit>100</step_performance_capturing_size_limit><dependencies></dependencies><partitionschemas></partitionschemas><slaveservers></slaveservers><clusterschemas></clusterschemas><created_user/><created_date/><modified_user/><modified_date/><key_for_session_key/><is_key_private>N</is_key_private></info>
-  <connection><name>SEDS_OLTP</name><server>localhost</server><type>ORACLE</type><access>Native</access><database>/FREEPDB1</database><port>1521</port><username>SEDS_OLTP</username><password>SEDS_OLTP</password><servername/><data_tablespace/><index_tablespace/><attributes><attribute><code>PORT_NUMBER</code><attribute>1521</attribute></attribute></attributes></connection>
-  <connection><name>SEDS_DW</name><server>localhost</server><type>ORACLE</type><access>Native</access><database>/FREEPDB1</database><port>1521</port><username>SEDS_DW</username><password>SEDS_DW</password><servername/><data_tablespace/><index_tablespace/><attributes><attribute><code>PORT_NUMBER</code><attribute>1521</attribute></attribute></attributes></connection>
-  <order><hop><from>Extract and transform POZAJMICA</from><to>Load FACT_POZAJMICA</to><enabled>Y</enabled></hop></order>
-  <step><name>Extract and transform POZAJMICA</name><type>TableInput</type><description>Derives role-playing date keys and loan measures from OLTP loans.</description><distribute>Y</distribute><custom_distribution/><copies>1</copies><partitioning><method>none</method><schema_name/></partitioning><connection>SEDS_OLTP</connection><sql>SELECT po.pozajmica_id AS POZAJMICA_ID,
-       TO_NUMBER(TO_CHAR(po.datum_pozajmice, 'YYYYMMDD')) AS DATUM_POZAJMICE_ID,
-       TO_NUMBER(TO_CHAR(po.rok_vracanja, 'YYYYMMDD')) AS ROK_VRACANJA_ID,
-       CASE WHEN po.datum_vracanja IS NOT NULL
-            THEN TO_NUMBER(TO_CHAR(po.datum_vracanja, 'YYYYMMDD')) END AS DATUM_VRACANJA_ID,
+  <info>
+    <name>10_load_fact_pozajmica</name>
+    <description>Popunjava činjenicu pozajmice: jedan red za jednu OLTP pozajmicu.</description>
+    <extended_description/>
+    <trans_version/>
+    <trans_type>Normal</trans_type>
+    <directory>/</directory>
+    <parameters/>
+    <log>
+      <trans-log-table>
+        <connection/>
+        <schema/>
+        <table/>
+        <size_limit_lines/>
+        <interval/>
+        <timeout_days/>
+      </trans-log-table>
+      <perf-log-table>
+        <connection/>
+        <schema/>
+        <table/>
+        <interval/>
+        <timeout_days/>
+      </perf-log-table>
+      <channel-log-table>
+        <connection/>
+        <schema/>
+        <table/>
+        <timeout_days/>
+      </channel-log-table>
+      <step-log-table>
+        <connection/>
+        <schema/>
+        <table/>
+        <timeout_days/>
+      </step-log-table>
+      <metrics-log-table>
+        <connection/>
+        <schema/>
+        <table/>
+        <interval/>
+        <timeout_days/>
+      </metrics-log-table>
+    </log>
+    <maxdate/>
+    <size_rowset>10000</size_rowset>
+    <sleep_time_empty>50</sleep_time_empty>
+    <sleep_time_full>50</sleep_time_full>
+    <unique_connections>N</unique_connections>
+    <feedback_shown>Y</feedback_shown>
+    <feedback_size>50000</feedback_size>
+    <using_thread_priorities>Y</using_thread_priorities>
+    <capture_step_performance>N</capture_step_performance>
+    <step_performance_capturing_delay>1000</step_performance_capturing_delay>
+    <step_performance_capturing_size_limit>100</step_performance_capturing_size_limit>
+    <dependencies/>
+    <partitionschemas/>
+    <slaveservers/>
+    <clusterschemas/>
+    <created_user/>
+    <created_date/>
+    <modified_user/>
+    <modified_date/>
+    <key_for_session_key/>
+    <is_key_private>N</is_key_private>
+  </info>
+  <connection>
+    <name>SEDS_OLTP</name>
+    <server>localhost</server>
+    <type>ORACLE</type>
+    <access>Native</access>
+    <database>/FREEPDB1</database>
+    <port>1521</port>
+    <username>SEDS_OLTP</username>
+    <password>SEDS_OLTP</password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute>
+        <code>PORT_NUMBER</code>
+        <attribute>1521</attribute>
+      </attribute>
+    </attributes>
+  </connection>
+  <connection>
+    <name>SEDS_DW</name>
+    <server>localhost</server>
+    <type>ORACLE</type>
+    <access>Native</access>
+    <database>/FREEPDB1</database>
+    <port>1521</port>
+    <username>SEDS_DW</username>
+    <password>SEDS_DW</password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute>
+        <code>PORT_NUMBER</code>
+        <attribute>1521</attribute>
+      </attribute>
+    </attributes>
+  </connection>
+  <order>
+    <hop>
+      <from>Preuzmi pozajmice i primerke</from>
+      <to>Izračunaj ključeve i mere</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Izračunaj ključeve i mere</from>
+      <to>Odaberi polja činjenice</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Odaberi polja činjenice</from>
+      <to>Učitaj FACT_POZAJMICA</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+  <step>
+    <name>Preuzmi pozajmice i primerke</name>
+    <type>TableInput</type>
+    <description>Spaja pozajmicu sa fizičkim primerkom radi određivanja publikacije i odeljenja.</description>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>SEDS_OLTP</connection>
+    <sql>SELECT po.pozajmica_id AS POZAJMICA_ID,
+       po.datum_pozajmice AS DATUM_POZAJMICE,
+       po.rok_vracanja AS ROK_VRACANJA,
+       po.datum_vracanja AS DATUM_VRACANJA,
        po.clan_id AS CLAN_ID,
        pr.publikacija_id AS PUBLIKACIJA_ID,
        pr.odeljenje_id AS ODELJENJE_ID,
-       po.status_pozajmice_id AS STATUS_POZAJMICE_ID,
-       po.rok_vracanja - po.datum_pozajmice AS BROJ_DANA_POZAJMICE,
-       CASE WHEN po.datum_vracanja IS NOT NULL
-            THEN GREATEST(po.datum_vracanja - po.rok_vracanja, 0) END AS BROJ_DANA_KASNJENJA
+       po.status_pozajmice_id AS STATUS_POZAJMICE_ID
   FROM pozajmica po
-  JOIN primerak pr ON pr.primerak_id = po.primerak_id</sql><limit/><lookup/><execute_each_row>N</execute_each_row><variables_active>N</variables_active><lazy_conversion_active>N</lazy_conversion_active><attributes/><cluster_schema/><remotesteps><input></input><output></output></remotesteps><GUI><xloc>120</xloc><yloc>160</yloc><draw>Y</draw></GUI></step>
-  <step><name>Load FACT_POZAJMICA</name><type>TableOutput</type><description>Loads the loan fact table after all dimensions.</description><distribute>Y</distribute><custom_distribution/><copies>1</copies><partitioning><method>none</method><schema_name/></partitioning><connection>SEDS_DW</connection><schema/><table>FACT_POZAJMICA</table><commit>10000</commit><truncate>N</truncate><ignore_errors>N</ignore_errors><use_batch>Y</use_batch><specify_fields>Y</specify_fields><partitioning_enabled>N</partitioning_enabled><partitioning_field/><partitioning_daily>N</partitioning_daily><partitioning_monthly>N</partitioning_monthly><tablename_in_field>N</tablename_in_field><tablename_field/><tablename_in_table>N</tablename_in_table><return_keys>N</return_keys><return_field/><fields><field><column_name>POZAJMICA_ID</column_name><stream_name>POZAJMICA_ID</stream_name></field><field><column_name>DATUM_POZAJMICE_ID</column_name><stream_name>DATUM_POZAJMICE_ID</stream_name></field><field><column_name>ROK_VRACANJA_ID</column_name><stream_name>ROK_VRACANJA_ID</stream_name></field><field><column_name>DATUM_VRACANJA_ID</column_name><stream_name>DATUM_VRACANJA_ID</stream_name></field><field><column_name>CLAN_ID</column_name><stream_name>CLAN_ID</stream_name></field><field><column_name>PUBLIKACIJA_ID</column_name><stream_name>PUBLIKACIJA_ID</stream_name></field><field><column_name>ODELJENJE_ID</column_name><stream_name>ODELJENJE_ID</stream_name></field><field><column_name>STATUS_POZAJMICE_ID</column_name><stream_name>STATUS_POZAJMICE_ID</stream_name></field><field><column_name>BROJ_DANA_POZAJMICE</column_name><stream_name>BROJ_DANA_POZAJMICE</stream_name></field><field><column_name>BROJ_DANA_KASNJENJA</column_name><stream_name>BROJ_DANA_KASNJENJA</stream_name></field></fields><attributes/><cluster_schema/><remotesteps><input></input><output></output></remotesteps><GUI><xloc>580</xloc><yloc>160</yloc><draw>Y</draw></GUI></step>
-  <step_error_handling></step_error_handling><slave-step-copy-partition-distribution></slave-step-copy-partition-distribution><slave_transformation>N</slave_transformation><attributes/>
+  JOIN primerak pr ON pr.primerak_id = po.primerak_id</sql>
+    <limit/>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input/>
+      <output/>
+    </remotesteps>
+    <GUI>
+      <xloc>80</xloc>
+      <yloc>160</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Izračunaj ključeve i mere</name>
+    <type>ScriptValueMod</type>
+    <description>Formira ključeve tri vremenske uloge, planirano trajanje i dane kašnjenja.</description>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <compatible>N</compatible>
+    <optimizationLevel>9</optimizationLevel>
+    <jsScripts>
+      <jsScript>
+        <jsScript_type>0</jsScript_type>
+        <jsScript_name>Ključevi i mere činjenice</jsScript_name>
+        <jsScript_script><![CDATA[
+var DATUM_POZAJMICE_ID = Number(date2str(DATUM_POZAJMICE, "yyyyMMdd"));
+var ROK_VRACANJA_ID = Number(date2str(ROK_VRACANJA, "yyyyMMdd"));
+var DATUM_VRACANJA_ID = null;
+var BROJ_DANA_KASNJENJA = null;
+var BROJ_DANA_POZAJMICE = (ROK_VRACANJA.getTime() - DATUM_POZAJMICE.getTime()) / 86400000;
+if (DATUM_VRACANJA != null) {
+  DATUM_VRACANJA_ID = Number(date2str(DATUM_VRACANJA, "yyyyMMdd"));
+  var kasnjenje = (DATUM_VRACANJA.getTime() - ROK_VRACANJA.getTime()) / 86400000;
+  BROJ_DANA_KASNJENJA = kasnjenje > 0 ? kasnjenje : 0;
+}
+]]></jsScript_script>
+      </jsScript>
+    </jsScripts>
+    <fields>
+      <field>
+        <name>DATUM_POZAJMICE_ID</name>
+        <rename>DATUM_POZAJMICE_ID</rename>
+        <type>Integer</type>
+        <length>8</length>
+        <precision>0</precision>
+        <replace>N</replace>
+      </field>
+      <field>
+        <name>ROK_VRACANJA_ID</name>
+        <rename>ROK_VRACANJA_ID</rename>
+        <type>Integer</type>
+        <length>8</length>
+        <precision>0</precision>
+        <replace>N</replace>
+      </field>
+      <field>
+        <name>DATUM_VRACANJA_ID</name>
+        <rename>DATUM_VRACANJA_ID</rename>
+        <type>Integer</type>
+        <length>8</length>
+        <precision>0</precision>
+        <replace>N</replace>
+      </field>
+      <field>
+        <name>BROJ_DANA_POZAJMICE</name>
+        <rename>BROJ_DANA_POZAJMICE</rename>
+        <type>Number</type>
+        <length>6</length>
+        <precision>0</precision>
+        <replace>N</replace>
+      </field>
+      <field>
+        <name>BROJ_DANA_KASNJENJA</name>
+        <rename>BROJ_DANA_KASNJENJA</rename>
+        <type>Number</type>
+        <length>6</length>
+        <precision>0</precision>
+        <replace>N</replace>
+      </field>
+    </fields>
+    <cluster_schema/>
+    <remotesteps>
+      <input/>
+      <output/>
+    </remotesteps>
+    <GUI>
+      <xloc>360</xloc>
+      <yloc>160</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Odaberi polja činjenice</name>
+    <type>SelectValues</type>
+    <description>Uklanja izvorne datume i zadržava samo polja definisana šemom činjenice.</description>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>POZAJMICA_ID</name>
+      </field>
+      <field>
+        <name>DATUM_POZAJMICE_ID</name>
+      </field>
+      <field>
+        <name>ROK_VRACANJA_ID</name>
+      </field>
+      <field>
+        <name>DATUM_VRACANJA_ID</name>
+      </field>
+      <field>
+        <name>CLAN_ID</name>
+      </field>
+      <field>
+        <name>PUBLIKACIJA_ID</name>
+      </field>
+      <field>
+        <name>ODELJENJE_ID</name>
+      </field>
+      <field>
+        <name>STATUS_POZAJMICE_ID</name>
+      </field>
+      <field>
+        <name>BROJ_DANA_POZAJMICE</name>
+      </field>
+      <field>
+        <name>BROJ_DANA_KASNJENJA</name>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <cluster_schema/>
+    <remotesteps>
+      <input/>
+      <output/>
+    </remotesteps>
+    <GUI>
+      <xloc>650</xloc>
+      <yloc>160</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Učitaj FACT_POZAJMICA</name>
+    <type>TableOutput</type>
+    <description>Upisuje činjenicu nakon što su dimenzije popunjene.</description>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>SEDS_DW</connection>
+    <schema/>
+    <table>FACT_POZAJMICA</table>
+    <commit>10000</commit>
+    <truncate>N</truncate>
+    <ignore_errors>N</ignore_errors>
+    <use_batch>Y</use_batch>
+    <specify_fields>Y</specify_fields>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_monthly>N</partitioning_monthly>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_field/>
+    <tablename_in_table>N</tablename_in_table>
+    <return_keys>N</return_keys>
+    <return_field/>
+    <fields>
+      <field>
+        <column_name>POZAJMICA_ID</column_name>
+        <stream_name>POZAJMICA_ID</stream_name>
+      </field>
+      <field>
+        <column_name>DATUM_POZAJMICE_ID</column_name>
+        <stream_name>DATUM_POZAJMICE_ID</stream_name>
+      </field>
+      <field>
+        <column_name>ROK_VRACANJA_ID</column_name>
+        <stream_name>ROK_VRACANJA_ID</stream_name>
+      </field>
+      <field>
+        <column_name>DATUM_VRACANJA_ID</column_name>
+        <stream_name>DATUM_VRACANJA_ID</stream_name>
+      </field>
+      <field>
+        <column_name>CLAN_ID</column_name>
+        <stream_name>CLAN_ID</stream_name>
+      </field>
+      <field>
+        <column_name>PUBLIKACIJA_ID</column_name>
+        <stream_name>PUBLIKACIJA_ID</stream_name>
+      </field>
+      <field>
+        <column_name>ODELJENJE_ID</column_name>
+        <stream_name>ODELJENJE_ID</stream_name>
+      </field>
+      <field>
+        <column_name>STATUS_POZAJMICE_ID</column_name>
+        <stream_name>STATUS_POZAJMICE_ID</stream_name>
+      </field>
+      <field>
+        <column_name>BROJ_DANA_POZAJMICE</column_name>
+        <stream_name>BROJ_DANA_POZAJMICE</stream_name>
+      </field>
+      <field>
+        <column_name>BROJ_DANA_KASNJENJA</column_name>
+        <stream_name>BROJ_DANA_KASNJENJA</stream_name>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input/>
+      <output/>
+    </remotesteps>
+    <GUI>
+      <xloc>960</xloc>
+      <yloc>160</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step_error_handling/>
+  <slave-step-copy-partition-distribution/>
+  <slave_transformation>N</slave_transformation>
+  <attributes/>
 </transformation>
