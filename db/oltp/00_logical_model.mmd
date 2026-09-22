@@ -1,6 +1,20 @@
 ---
 config:
   theme: base
+  themeVariables:
+    background: '#FFFFFF'
+    primaryColor: '#E6E6E6'
+    primaryTextColor: '#111111'
+    primaryBorderColor: '#333333'
+    secondaryColor: '#F2F2F2'
+    secondaryTextColor: '#111111'
+    secondaryBorderColor: '#555555'
+    tertiaryColor: '#FAFAFA'
+    tertiaryTextColor: '#111111'
+    tertiaryBorderColor: '#666666'
+    lineColor: '#4D4D4D'
+    edgeLabelBackground: '#FFFFFF'
+    fontFamily: 'Liberation Serif, Times New Roman, serif'
   layout: elk
   elk:
     layoutDirection: TB
@@ -14,7 +28,7 @@ erDiagram
     ODELJENJE ||--o{ PRIMERAK : "čuva"
 
     TIP_PUBLIKACIJE ||--o{ PUBLIKACIJA : "klasifikuje"
-    IZDAVAČ o|--o{ PUBLIKACIJA : "izdaje"
+    IZDAVAČ ||--o{ PUBLIKACIJA : "izdaje"
     AUTOR }o--o{ PUBLIKACIJA : "napisao"
 
     PUBLIKACIJA ||--o{ PRIMERAK : "ima"
