@@ -1,4 +1,4 @@
--- Ponderisani obim pozajmica po autoru; pozajmica publikacije sa više autora deli se ravnomerno.
+-- Ponderisani obim pozajmica po autoru; pozajmica publikacije sa vise autora deli se ravnomerno.
 
 WITH autorske_pozajmice AS (
   SELECT d.godina,

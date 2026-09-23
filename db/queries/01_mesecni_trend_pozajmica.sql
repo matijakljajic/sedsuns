@@ -1,4 +1,4 @@
--- Mesečni obim pozajmica, promena u odnosu na prethodni mesec i kumulativni zbir.
+-- Mesecni obim pozajmica, promena u odnosu na prethodni mesec i kumulativni zbir.
 
 WITH pozajmice_po_mesecu AS (
   SELECT mesec_datum,

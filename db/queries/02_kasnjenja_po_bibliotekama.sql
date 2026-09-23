@@ -1,4 +1,4 @@
--- Stopa zakašnjelih vraćanja i prosečno kašnjenje po biblioteci i godini.
+-- Stopa vracanja sa zakasnjenjem i prosecno kasnjenje po biblioteci i godini.
 
 SELECT godina,
        grad,

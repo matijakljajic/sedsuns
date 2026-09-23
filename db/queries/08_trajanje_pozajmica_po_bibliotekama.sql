@@ -1,4 +1,4 @@
--- Godišnje poređenje broja i prosečnog trajanja vraćenih pozajmica po biblioteci.
+-- Godisnje poredjenje broja i prosecnog trajanja vracenih pozajmica po biblioteci.
 
 SELECT d_poz.godina,
        g.naziv AS grad,

@@ -1,4 +1,4 @@
--- Tražnja za izdanjima izdavača, normalizovana brojem naslova i dostupnih primeraka.
+-- Traznja za izdanjima izdavaca, normalizovana brojem naslova i dostupnih primeraka.
 
 WITH koriscenje_publikacija AS (
   SELECT p.publikacija_id,

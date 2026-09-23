@@ -1,4 +1,4 @@
--- Obim pozajmica po polu i starosnoj grupi članova, sa godišnjim procentualnim udelom.
+-- Obim pozajmica po polu i starosnoj grupi clanova, sa godisnjim procentualnim udelom.
 
 SELECT d.godina,
        c.pol,

@@ -1,4 +1,4 @@
--- Najčešće pozajmljivane publikacije u svakoj godini.
+-- Najcesce pozajmljivane publikacije u svakoj godini.
 
 WITH publikacije_po_godini AS (
   SELECT d.godina,

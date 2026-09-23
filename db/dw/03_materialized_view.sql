@@ -1,4 +1,4 @@
--- Pokrenuti kao SEDS_DW nakon što Pentaho ECTL napuni skladište podataka.
+-- Pokrenuti kao SEDS_DW nakon Pentaho ECTL punjenja DW baze.
 -- Jedan red predstavlja jedan kalendarski mesec i jednu biblioteku.
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE
