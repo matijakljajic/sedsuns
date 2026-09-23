@@ -1,4 +1,4 @@
--- Run as SEDS_DW against FREEPDB1 after all PDI transformations finish.
+-- Pokrenuti kao SEDS_DW nad FREEPDB1 nakon završetka svih PDI transformacija.
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE
 

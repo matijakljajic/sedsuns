@@ -1,5 +1,5 @@
--- Run as SEDS_OLTP against FREEPDB1.
--- This script creates the OLTP schema from 00_relational_model.mmd.
+-- Pokrenuti kao SEDS_OLTP nad FREEPDB1.
+-- Skripta kreira OLTP šemu prema modelu iz datoteke 00_relational_model.mmd.
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE
 

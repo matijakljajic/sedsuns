@@ -33,7 +33,7 @@ load_table() {
     load_log=$(mktemp /tmp/sedsuns-sqlldr.XXXXXX.log)
     container_data_file="/tmp/sedsuns-${table_name}-${file_name}"
 
-    # CSV file CRLF to CR line ending fix
+    # Pretvara CRLF završetke redova u LF pre učitavanja.
     podman exec sedsuns-oracle sh -c 'sed "s/\\r$//" "$1" > "$2"' sh \
       "/seed-data/$table_name/$file_name" "$container_data_file"
 

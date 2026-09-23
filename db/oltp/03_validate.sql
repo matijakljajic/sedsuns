@@ -1,5 +1,5 @@
--- Run as SEDS_OLTP against FREEPDB1 after db/oltp/02_load.sh.
--- Expected row counts are derived from the supplied CSV shards, excluding headers.
+-- Pokrenuti kao SEDS_OLTP nad FREEPDB1 nakon db/oltp/02_load.sh.
+-- Očekivani brojevi redova izvedeni su iz dostavljenih CSV delova, bez zaglavlja.
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE
 

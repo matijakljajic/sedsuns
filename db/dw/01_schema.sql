@@ -1,5 +1,5 @@
--- Run as SEDS_DW against FREEPDB1.
--- The grain of fact_pozajmica is one row per OLTP loan.
+-- Pokrenuti kao SEDS_DW nad FREEPDB1.
+-- Granularnost tabele fact_pozajmica je jedan red po OLTP pozajmici.
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE
 
